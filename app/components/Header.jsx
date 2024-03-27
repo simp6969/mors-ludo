@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function HeaderBHQ(prop) {
   if (prop.loginPage) {
-    return "ZL";
+    return null;
   }
   return (
     <div className="absolute top-5 flex text-[18px] gap-[20px] w-[100vw] ">

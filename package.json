@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "backend": "cd backend && npx nodemon route.js"
   },
   "dependencies": {
     "cookies-next": "^4.1.1",

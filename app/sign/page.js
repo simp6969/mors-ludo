@@ -1,6 +1,6 @@
 "use client";
 import { HeaderBHQ } from "../components/Header";
-import { getCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeHandler, ThemeHandlerConst } from "../components/ThemeApplier";
@@ -9,7 +9,7 @@ export default function Sign() {
   const router = useRouter();
   const [mainStatePipe, setMainStatePipe] = useState({});
   useEffect(() => {
-    if (getCookie("sign")) {
+    if (getCookie("signed")) {
       router.push("/");
     }
   }, []);
@@ -21,14 +21,22 @@ export default function Sign() {
     setMainStatePipe({ ...mainStatePipe, password: event.target.value });
   }
   async function handleSignIn() {
-    if (
-      mainStatePipe?.username ||
-      mainStatePipe?.password ||
-      mainStatePipe?.username.includes("@")
-    ) {
-      await fetch("http://localhost:8080/user/" + mainStatePipe.username)
+    if (mainStatePipe.username && mainStatePipe.password) {
+      await fetch(
+        "http://localhost:8080/user/" +
+          mainStatePipe.username +
+          "/" +
+          mainStatePipe.password
+      )
         .then((res) => res.json())
-        .then((text) => console.log(text));
+        .then((text) => {
+          if (text.length > 0) {
+            setCookie("signed", mainStatePipe.username);
+            router.push("/");
+          } else {
+            setMainStatePipe({ ...mainStatePipe, isNotValidSign: true });
+          }
+        });
     }
   }
   return (
@@ -50,8 +58,8 @@ export default function Sign() {
           className="defaultInput"
           spellCheck="false"
         ></input>
-        {mainStatePipe.isValidSign ? (
-          <p className="text-[18px] text-red">
+        {mainStatePipe.isNotValidSign ? (
+          <p className="text-[18px] text-[#9e0000]">
             please enter valid password or username
           </p>
         ) : null}
@@ -67,6 +75,13 @@ export default function Sign() {
           onClick={() => handleSignIn()}
         >
           Let's Go!
+        </button>
+        <button
+          onClick={() => {
+            router.push("createAccount");
+          }}
+        >
+          No Accounts Yet?
         </button>
       </div>
     </div>

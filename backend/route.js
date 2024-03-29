@@ -21,11 +21,12 @@ app.post("/user", (req, res) => {
   userModel.create(model);
   res.json(model);
 });
-app.get("/user/:username", async (req, res) => {
+app.get("/user/:username/:password", async (req, res) => {
   const { username } = req.params;
+  const { password } = req.params;
   const userData = await userModel.find();
   const filt = userData.filter((element) => {
-    if (element.username == username) {
+    if (element.username === username && element.password === password) {
       return element;
     }
   });
